@@ -1,7 +1,5 @@
 const mongoose = require("mongoose");
 
-mongoose.connect("db");
-
 const productSchema = mongoose.Schema({
   image: String,
   name: String,
