@@ -1,0 +1,49 @@
+<%- include('./partials/header') %>
+    <div class="w-full min-h-screen flex items-start px-20 py-20 bg-gray-100">
+        <div class="w-1/4 flex flex-col items-start">
+            <div class="flex items-center gap-2 mb-6">
+                <h3 class="text-gray-700">Sort by</h3>
+                <form action="/shop">
+                    <select class="border border-gray-300 px-2 py-1 rounded-md" name="sortby" id="">
+                        <option value="popular">Popular</option>
+                        <option value="newest">Newest</option>
+                    </select>
+                </form>
+            </div>
+            <div class="flex flex-col mt-10">
+                <a class="block w-fit mb-2 text-gray-700 hover:underline" href="">New Collection</a>
+                <a class="block w-fit mb-2 text-gray-700 hover:underline" href="">All Products</a>
+                <a class="block w-fit mb-2 text-gray-700 hover:underline" href="">Discounted Products</a>
+            </div>
+            <div class="mt-20">
+                <h4 class="block w-fit mb-2 text-gray-700">Filter by:</h4>
+                <a class="block w-fit mb-2 text-gray-700 hover:underline" href="">Availability</a>
+                <a class="block w-fit mb-2 text-gray-700 hover:underline" href="">Discount</a>
+            </div>
+        </div>
+        <div class="w-3/4 flex flex-wrap gap-5 h-auto">
+            <% products.forEach(function(product){ %>
+                <div class="w-60 bg-white rounded-lg shadow-md overflow-hidden">
+                    <div class="w-full h-52 flex items-center justify-center bg-[<%= product.bgcolor %>]">
+                        <img class="h-48 object-contain"
+                            src="data:image/jpeg;base64,<%= product.image.toString('base64') %>"
+                            alt="<%= product.name %>">
+                    </div>
+                    <div class="flex justify-between items-center px-4 py-4 bg-[<%= product.panelcolor %>]">
+                        <div>
+                            <h3 class="text-gray-900 font-semibold">
+                                <%= product.name %>
+                            </h3>
+                            <h4 class="text-gray-700">₹ <%= product.price %>
+                            </h4>
+                        </div>
+                        <a class="w-7 h-7 flex items-center justify-center rounded-full bg-gray-200 hover:bg-gray-300"
+                            href="">
+                            <i class="ri-add-line text-gray-700"></i>
+                        </a>
+                    </div>
+                </div>
+                <% }) %>
+        </div>
+    </div>
+    <%- include('./partials/footer') %>
