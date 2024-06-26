@@ -14,20 +14,19 @@
         <h3 class="text-xl">Scatch</h3>
     </nav> -->
 
-<body>
-    <header class="bg-gray-800 text-white py-4 shadow-md">
-        <div class="container mx-auto flex justify-between items-center">
-            <div class="text-lg font-bold">
-                <a href="/" class="text-blue-400 hover:text-blue-300">Scatch</a>
-            </div>
-            <div class="flex items-center">
-                <span class="mr-4">Logged in as: <strong>Username</strong></span>
-                <form action="/logout" method="POST">
-                    <button type="submit" class="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded">
-                        Logout
-                    </button>
-                </form>
-            </div>
-        </div>
-    </header>
+<body class="font">
+    <nav class="w-full flex justify-between px-5 py-3">
+        <h3 class="text-xl">Scatch</h3>
+        <% var loggedin=typeof loggedin !=="undefined" ? loggedin : true %>
+            <% if(loggedin) { %>
+                <div class="flex gap-5">
+                    <a href="">Shop</a>
+                    <a href="/cart">Cart</a>
+                    <a href="">My Account</a>
+                    <a class="text-red-600" href="/users/logout">Logout</a>
+                </div>
+                <% }%>
+
+    </nav>
+
 </body>
