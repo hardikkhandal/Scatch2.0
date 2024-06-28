@@ -5,69 +5,55 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Customer Support Chat</title>
-    <script src="/socket.io/socket.io.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-
-        .chat-box {
-            width: 300px;
-            margin: 0 auto;
-        }
-
-        .messages {
-            height: 200px;
-            border: 1px solid #ccc;
-            overflow-y: scroll;
-            padding: 10px;
-        }
-
-        .input {
-            display: flex;
-        }
-
-        input[type="text"] {
-            flex: 1;
-            padding: 10px;
-        }
-
-        button {
-            padding: 10px;
-        }
-    </style>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-7M5bI1kBeBDblh3k/5Os/5gvm5uAMv2gOyONm8c2WnKE4sZMOaBRYx/YgRj2alFMgNL4a1lVNN2o2e/17LxUiA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
-<body>
-    <div class="chat-box">
-        <h2>Customer Support Chat - <%= userType==='user' ? user : 'Admin' %>
-        </h2>
+<%- include('./partials/header') %>
+    <div class="w-full h-screen flex justify-center items-center h-screen">
 
-        <div class="messages" id="messages"></div>
-        <div class="input">
-            <input type="text" id="message" placeholder="Type your message...">
-            <button id="send">Send</button>
-        </div>
+        <body class="bg-gray-100 flex justify-center items-center h-screen">
+
+            <div class="chat-box bg-white shadow-md rounded-lg w-96">
+                <div class="chat-header bg-blue-500 text-white py-3 px-4 flex items-center justify-center">
+                    <i class="fas fa-comments mr-2"></i>
+                    Customer Support Chat - <%= userType==='user' ? user : 'Admin' %>
+                </div>
+                <div class="messages h-72 overflow-y-auto p-4"></div>
+                <div class="input flex items-center justify-between px-4 py-2 border-t border-gray-300">
+                    <input type="text" id="message" placeholder="Type your message..."
+                        class="flex-1 border border-gray-300 rounded-md py-2 px-3 focus:outline-none focus:ring focus:border-blue-500">
+                    <button id="send"
+                        class="ml-2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md focus:outline-none focus:ring focus:border-blue-500">
+                        Send</button>
+                </div>
+            </div>
+
+            <script src="/socket.io/socket.io.js"></script>
+            <script>
+                const socket = io();
+                const messages = document.querySelector('.messages');
+                const userType = '<%= userType %>';
+                const inputMessage = document.getElementById('message');
+                const sendButton = document.getElementById('send');
+
+                sendButton.onclick = () => {
+                    const msg = `${userType}: ${inputMessage.value}`;
+                    socket.emit('message', msg);
+                    inputMessage.value = '';
+                };
+
+                socket.on('message', (msg) => {
+                    const messageElement = document.createElement('div');
+                    messageElement.classList.add('message', 'bg-gray-200', 'rounded-md', 'p-2', 'my-2', 'max-w-80');
+                    messageElement.textContent = msg;
+                    messages.appendChild(messageElement);
+                    messages.scrollTop = messages.scrollHeight; // Scroll to bottom
+                });
+            </script>
+        </body>
     </div>
-    <script>
-        const socket = io();
-        const messages = document.getElementById('messages');
-        const userType = '<%= userType %>';
-        const inputMessage = document.getElementById('message');
-        const sendButton = document.getElementById('send');
-
-        sendButton.onclick = () => {
-            const msg = `${userType}: ${inputMessage.value}`;
-            socket.emit('message', msg);
-            inputMessage.value = '';
-        };
-
-        socket.on('message', (msg) => {
-            const messageElement = document.createElement('div');
-            messageElement.textContent = msg;
-            messages.appendChild(messageElement);
-        });
-    </script>
-</body>
 
 </html>
