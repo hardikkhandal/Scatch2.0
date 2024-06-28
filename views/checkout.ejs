@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout</title>
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+
+<body>
+    <h1>Checkout</h1>
+    <p>User ID: <%= userId._id %>
+    </p>
+    <button id="checkout-button">Checkout</button>
+
+    <script>
+        const stripe = Stripe('pk_test_51PVwfV02WrcibP7nGbSMtm7bHoDmMjhaSMRNUizirl3FubtY3o8HOmPap1lzV8yJKSLuLeoN3b5wMLWJhYqdjJjl00pgwAjGrJ');
+        const checkoutButton = document.getElementById('checkout-button');
+        const userId = '<%= userId._id %>'; // Embedding userId from server-side template
+
+        checkoutButton.addEventListener('click', async () => {
+            try {
+                const response = await fetch('/create-checkout-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ userId: userId }),
+                });
+
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+
+                const session = await response.json();
+                console.log('Stripe session ID:', session.id);
+
+                // Redirect to Stripe checkout
+                const { error } = await stripe.redirectToCheckout({ sessionId: session.id });
+
+                if (error) {
+                    console.error('Error redirecting to checkout:', error);
+                    // Handle error
+                }
+            } catch (error) {
+                console.error('Error creating checkout session:', error);
+                // Handle error
+            }
+        });
+    </script>
+</body>
+
+</html>

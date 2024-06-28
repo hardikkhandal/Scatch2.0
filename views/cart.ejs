@@ -2,7 +2,7 @@
     <div class="w-full h-screen flex items-start px-20 py-20 gap-10">
         <div class="w-[30%] rounded-md overflow-hidden">
             <div class="w-full flex justify-center items-center h-80 bg-[<%= user.cart[0].bgcolor %>]">
-                <img class="h=[18rem]" src="data:image/jpeg;base64, <%= user.cart[0].image.toString('base64') %>"
+                <img class="h-[18rem]" src="data:image/jpeg;base64, <%= user.cart[0].image.toString('base64') %>"
                     alt="">
             </div>
             <div class="w-full flex justify-between px-5 py-4 bg-[<%= user.cart[0].panelcolor %>]">
@@ -51,7 +51,47 @@
                     Rs. <%=finalprice %>
                 </h3>
             </div>
-            <form action=""></form>
+            <form id="checkout-form">
+                <button id="checkout-button" type="button"
+                    class="bg-blue-500 text-white px-5 py-3 rounded-md mt-5">Checkout</button>
+            </form>
         </div>
     </div>
     <%- include('./partials/footer') %>
+
+        <script src="https://js.stripe.com/v3/"></script>
+        <script>
+            const stripe = Stripe('pk_test_51PVwfV02WrcibP7nGbSMtm7bHoDmMjhaSMRNUizirl3FubtY3o8HOmPap1lzV8yJKSLuLeoN3b5wMLWJhYqdjJjl00pgwAjGrJ');
+            const checkoutButton = document.getElementById('checkout-button');
+            const userId = '<%= user._id %>'; // Embedding userId from server-side template
+
+            checkoutButton.addEventListener('click', async () => {
+                try {
+                    const response = await fetch('/create-checkout-session', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ userId: userId }),
+                    });
+
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+
+                    const session = await response.json();
+                    console.log('Stripe session ID:', session.id);
+
+                    // Redirect to Stripe checkout
+                    const { error } = await stripe.redirectToCheckout({ sessionId: session.id });
+
+                    if (error) {
+                        console.error('Error redirecting to checkout:', error);
+                        // Handle error
+                    }
+                } catch (error) {
+                    console.error('Error creating checkout session:', error);
+                    // Handle error
+                }
+            });
+        </script>
