@@ -5,6 +5,9 @@ const cookieParser = require("cookie-parser");
 const path = require("path");
 require("dotenv").config();
 
+const http = require("http");
+const socketIo = require("socket.io");
+
 const ownerRoutes = require("./routes/ownerRoutes");
 const usersRoutes = require("./routes/usersRoutes");
 const productRoutes = require("./routes/productRoutes");
@@ -19,6 +22,10 @@ const isLoggedIn = require("./middlewares/isLoggedIn");
 const stripe = require("stripe")(
   "sk_test_51PVwfV02WrcibP7nDYQ3DEEVLkeeSCTcJ0MyH8f2SGDb0iDLKjLjdsl8lF4F3E77zJyAJMD0uyJJXVNSCEPUOyKP00TETFMeku"
 );
+
+//
+const server = http.createServer(app);
+const io = socketIo(server);
 
 app.use(express.json());
 app.use(
@@ -91,4 +98,27 @@ app.get("/checkout", isLoggedIn, (req, res) => {
   res.render("checkout", { userId: userId });
 });
 
-app.listen(3001);
+// Routes
+app.get("/chat", isLoggedIn, (req, res) => {
+  let user = req.user.fullname;
+  res.render("chat", { userType: "user", user: user });
+});
+
+app.get("/admin-chat", isLoggedIn, (req, res) => {
+  res.render("chat", { userType: "admin" });
+});
+
+// Socket.io connection
+io.on("connection", (socket) => {
+  console.log("A user connected: " + socket.id);
+
+  socket.on("message", (msg) => {
+    io.emit("message", msg); // Broadcast the message to all connected clients
+  });
+
+  socket.on("disconnect", () => {
+    console.log("User disconnected: " + socket.id);
+  });
+});
+
+server.listen(3000);

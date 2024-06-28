@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Support Chat</title>
+    <script src="/socket.io/socket.io.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+
+        .chat-box {
+            width: 300px;
+            margin: 0 auto;
+        }
+
+        .messages {
+            height: 200px;
+            border: 1px solid #ccc;
+            overflow-y: scroll;
+            padding: 10px;
+        }
+
+        .input {
+            display: flex;
+        }
+
+        input[type="text"] {
+            flex: 1;
+            padding: 10px;
+        }
+
+        button {
+            padding: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="chat-box">
+        <h2>Customer Support Chat - <%= userType==='user' ? user : 'Admin' %>
+        </h2>
+
+        <div class="messages" id="messages"></div>
+        <div class="input">
+            <input type="text" id="message" placeholder="Type your message...">
+            <button id="send">Send</button>
+        </div>
+    </div>
+    <script>
+        const socket = io();
+        const messages = document.getElementById('messages');
+        const userType = '<%= userType %>';
+        const inputMessage = document.getElementById('message');
+        const sendButton = document.getElementById('send');
+
+        sendButton.onclick = () => {
+            const msg = `${userType}: ${inputMessage.value}`;
+            socket.emit('message', msg);
+            inputMessage.value = '';
+        };
+
+        socket.on('message', (msg) => {
+            const messageElement = document.createElement('div');
+            messageElement.textContent = msg;
+            messages.appendChild(messageElement);
+        });
+    </script>
+</body>
+
+</html>
