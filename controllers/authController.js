@@ -55,5 +55,5 @@ module.exports.loginUser = async function (req, res) {
 
 module.exports.logoutUser = async function (req, res) {
   res.cookie("token", "");
-  res.redirect("/");
+  res.redirect("/land");
 };

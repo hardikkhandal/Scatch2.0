@@ -4,6 +4,10 @@ const productModel = require("../models/productModel");
 const userModel = require("../models/userModel");
 const router = express();
 
+router.get("/land", function (req, res) {
+  res.render("land");
+});
+
 router.get("/", function (req, res) {
   let error = req.flash("error");
   res.render("index", { error, loggedin: false });

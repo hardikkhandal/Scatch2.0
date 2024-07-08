@@ -19,9 +19,7 @@ const isLoggedIn = require("./middlewares/isLoggedIn");
 
 //stripe integration
 
-const stripe = require("stripe")(
-  "sk_test_51PVwfV02WrcibP7nDYQ3DEEVLkeeSCTcJ0MyH8f2SGDb0iDLKjLjdsl8lF4F3E77zJyAJMD0uyJJXVNSCEPUOyKP00TETFMeku"
-);
+const stripe = require("stripe")(process.env.STRIPE_KEY);
 
 //
 const server = http.createServer(app);
